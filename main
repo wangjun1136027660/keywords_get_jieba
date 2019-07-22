@@ -1,0 +1,41 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+__author__ = 'John AHUT'
+## =====================================================================================================================
+import jieba.analyse
+import pandas as pd
+words0=[]
+for line in open("G:/机器学习项目\机器学习/十六、贝叶斯-新闻分类/贝叶斯-新闻分类/data/des_keji.txt"):
+    words0.append(line)
+#print(words0)
+
+stopword_=open('G:\机器学习项目\机器学习\十六、贝叶斯-新闻分类\贝叶斯-新闻分类\stopwords.txt','r',encoding='utf-8')  # --------------------- 禁忌表（停用表）
+stopwords=pd.read_csv(stopword_,index_col=False,sep='\t',quoting=3,encoding='utf-8',names=['stopword'])
+#print(stopwords.head())
+stopwords = stopwords.stopword.values.tolist()
+# ======================================================================================================================
+# 遍历禁忌表，剔除无效词
+def drop_stopwords(contents,stopwords):
+    contents_clean = []
+    for line in contents:
+        line_clean = []
+        for word in line:
+            if word in stopwords:
+                continue
+            line_clean.append(word)
+        contents_clean.append(line_clean)
+    return contents_clean
+# ======================================================================================================================
+contents_clean=drop_stopwords(words0,stopwords)
+y=[]
+for i in range(len(contents_clean)):
+    for j in range(len(contents_clean[i])):
+        y.append(contents_clean[i][j])
+
+print(len(y))
+content_S_str = "".join(y)
+print(y)
+print('=============')
+print(content_S_str)
+print('*'*50)
+print (" ".join(jieba.analyse.extract_tags(content_S_str, topK=20, withWeight=False)))
